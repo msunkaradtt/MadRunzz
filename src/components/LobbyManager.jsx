@@ -1,40 +1,31 @@
-import React from "react"
-
-const LobbyManager = (props) => {
-    return (
-        <></>
-    )
-}
-
-
-import React, { useState } from "react";
+import React, { useState } from "react"
 
 // A helper function to generate a short unique code
 function generateUniqueCode(length = 6) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  let result = ""
   for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
-  return result;
+  return result
 }
 
-export default function LobbyManager() {
+const LobbyManager = (props) => {
   // Toggle between "create" and "join"
-  const [mode, setMode] = useState("create");
+  const [mode, setMode] = useState("create")
 
   // CREATE ROOM STATES
-  const [roomName, setRoomName] = useState("");
-  const [creatorName, setCreatorName] = useState("");
-  const [environment, setEnvironment] = useState("Fire");
-  const [totalPlayers, setTotalPlayers] = useState(4);
-  const [movementSpeed, setMovementSpeed] = useState("1");
-  const [roomCode, setRoomCode] = useState("");
+  const [roomName, setRoomName] = useState("")
+  const [creatorName, setCreatorName] = useState("")
+  const [environment, setEnvironment] = useState("Fire")
+  const [totalPlayers, setTotalPlayers] = useState(4)
+  const [movementSpeed, setMovementSpeed] = useState("1")
+  const [roomCode, setRoomCode] = useState("")
 
   // JOIN ROOM STATES
-  const [playerName, setPlayerName] = useState("");
-  const [characterColor, setCharacterColor] = useState("#ff0000");
-  const [joinCode, setJoinCode] = useState("");
+  const [playerName, setPlayerName] = useState("")
+  const [characterColor, setCharacterColor] = useState("#ff0000")
+  const [joinCode, setJoinCode] = useState("")
 
   // Possible speeds with increments of 0.5 from 1 to 5
   const speedOptions = [
@@ -42,23 +33,23 @@ export default function LobbyManager() {
   ];
 
   const handleCreateRoom = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     // Generate a unique code for the room
-    const code = generateUniqueCode();
-    setRoomCode(code);
+    const code = generateUniqueCode()
+    setRoomCode(code)
     // In a real app, you'd also send this to the server, store it in DB, etc.
   };
 
   const handleJoinRoom = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     // In a real app, you'd validate the joinCode on the server
-    alert(`Joining room with code: ${joinCode}\nPlayer: ${playerName}\nColor: ${characterColor}`);
+    alert(`Joining room with code: ${joinCode}\nPlayer: ${playerName}\nColor: ${characterColor}`)
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <div className="max-w-lg mx-auto bg-white p-6 rounded shadow-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">Lobby Manager</h1>
+    <div className="flex items-center justify-items-center min-h-screen bg-lobbyblue p-10">
+      <div className="max-w-lg mx-auto bg-white p-12 rounded shadow-md">
+        <h1 className="text-2xl font-bold mb-4 text-center">MadRunzz</h1>
 
         {/* Toggle Buttons */}
         <div className="flex justify-center space-x-4 mb-6">

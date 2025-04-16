@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --color-lobbyblue: #87ceeb;
+}
+
 * {
   box-sizing: border-box;
 }
