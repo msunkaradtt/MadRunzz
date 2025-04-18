@@ -1,220 +1,262 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 
-// A helper function to generate a short unique code
-function generateUniqueCode(length = 6) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-  let result = ""
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return result
-}
+/* ─ helpers ───────────────────────────────── */
+const envs = [
+  { name: "Fire", emoji: "🔥" },
+  { name: "Water", emoji: "💧" },
+  { name: "Earth", emoji: "🌱" },
+  { name: "Air", emoji: "💨" },
+];
 
-const LobbyManager = (props) => {
-  // Toggle between "create" and "join"
-  const [mode, setMode] = useState("create")
+const speeds = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
 
-  // CREATE ROOM STATES
-  const [roomName, setRoomName] = useState("")
-  const [creatorName, setCreatorName] = useState("")
-  const [environment, setEnvironment] = useState("Fire")
-  const [totalPlayers, setTotalPlayers] = useState(4)
-  const [movementSpeed, setMovementSpeed] = useState("1")
-  const [roomCode, setRoomCode] = useState("")
+const genCode = (len = 6) =>
+  Array.from({ length: len }, () =>
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".charAt(
+      Math.floor(Math.random() * 36)
+    )
+  ).join("");
 
-  // JOIN ROOM STATES
-  const [playerName, setPlayerName] = useState("")
-  const [characterColor, setCharacterColor] = useState("#ff0000")
-  const [joinCode, setJoinCode] = useState("")
+/* ─ component ─────────────────────────────── */
+export default function LobbyManager() {
+  /* ui mode */
+  const [mode, setMode] = useState("create");
 
-  // Possible speeds with increments of 0.5 from 1 to 5
-  const speedOptions = [
-    1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5
-  ];
+  /* create‑room state */
+  const [roomName, setRoomName] = useState("");
+  const [creatorName, setCreatorName] = useState("");
+  const [maxPlayers, setMaxPlayers] = useState(4);
+  const [speed, setSpeed] = useState(1);
+  const [envPick, setEnvPick] = useState([]);
+  const [roomCode, setRoomCode] = useState("");
 
-  const handleCreateRoom = (e) => {
-    e.preventDefault()
-    // Generate a unique code for the room
-    const code = generateUniqueCode()
-    setRoomCode(code)
-    // In a real app, you'd also send this to the server, store it in DB, etc.
+  /* join‑room state */
+  const [playerName, setPlayerName] = useState("");
+  const [charColor, setCharColor] = useState("#ff0000");
+  const [joinCode, setJoinCode] = useState("");
+
+  /* ─ logic ─ */
+  const toggleEnv = (env) =>
+    setEnvPick((prev) =>
+      prev.includes(env)
+        ? prev.filter((e) => e !== env)
+        : prev.length < 2
+        ? [...prev, env]
+        : prev
+    );
+
+  const create = (e) => {
+    e.preventDefault();
+    if (envPick.length !== 2) return;
+    setRoomCode(genCode());
   };
 
-  const handleJoinRoom = (e) => {
-    e.preventDefault()
-    // In a real app, you'd validate the joinCode on the server
-    alert(`Joining room with code: ${joinCode}\nPlayer: ${playerName}\nColor: ${characterColor}`)
+  const join = (e) => {
+    e.preventDefault();
+    // integrate real join logic here
+    alert(`Joining ${joinCode} as ${playerName}`);
   };
 
+  /* ─ ui ─ */
   return (
-    <div className="flex items-center justify-items-center min-h-screen bg-lobbyblue p-10">
-      <div className="max-w-lg mx-auto bg-white p-12 rounded shadow-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">MadRunzz</h1>
+    <div className="w-full h-full flex flex-col items-center justify-start">
+      {/* ───────── title ───────── */}
+      <h2 className="mt-6 mb-4 text-4xl font-extrabold tracking-widest select-none">
+        MadRunzz
+      </h2>
 
-        {/* Toggle Buttons */}
-        <div className="flex justify-center space-x-4 mb-6">
-          <button
-            onClick={() => setMode("create")}
-            className={`px-4 py-2 rounded 
-              ${mode === "create" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
-          >
-            Create Room
-          </button>
-          <button
-            onClick={() => setMode("join")}
-            className={`px-4 py-2 rounded 
-              ${mode === "join" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
-          >
-            Join Room
-          </button>
+      {/* ───────── card ───────── */}
+      <div className="w-full max-w-lg h-[calc(100%-7rem)] flex flex-col rounded-xl shadow-xl border overflow-hidden">
+        {/* toggle */}
+        <div className="flex justify-center gap-2 p-4 backdrop-blur-md">
+          {["create", "join"].map((m) => (
+            <button
+              key={m}
+              onClick={() => setMode(m)}
+              className={`px-5 py-2 rounded-full font-semibold transition
+                ${
+                  mode === m
+                    ? "bg-blue-600 text-white shadow"
+                    : "bg-gray-200/70 hover:bg-gray-300/70 dark:bg-slate-600/40 dark:hover:bg-slate-500/40 text-gray-800 dark:text-gray-100"
+                }`}
+            >
+              {m === "create" ? "Create Room" : "Join Room"}
+            </button>
+          ))}
         </div>
 
-        {mode === "create" && (
-          <form onSubmit={handleCreateRoom} className="space-y-4">
-            {/* Room Name */}
-            <div>
-              <label className="block font-semibold mb-1">Room Name</label>
-              <input
-                type="text"
-                value={roomName}
-                onChange={(e) => setRoomName(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
+        {/* scroll area */}
+        <div className="grow overflow-y-auto p-6 space-y-8">
+          {mode === "create" ? (
+            <form onSubmit={create} className="space-y-6">
+              {/* room name */}
+              <label className="block">
+                <span className="font-semibold">Room Name</span>
+                <input
+                  className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500"
+                  value={roomName}
+                  onChange={(e) => setRoomName(e.target.value)}
+                  required
+                />
+              </label>
 
-            {/* Room Creator Name */}
-            <div>
-              <label className="block font-semibold mb-1">Creator Name</label>
-              <input
-                type="text"
-                value={creatorName}
-                onChange={(e) => setCreatorName(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
+              {/* creator name */}
+              <label className="block">
+                <span className="font-semibold">Creator Name</span>
+                <input
+                  className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500"
+                  value={creatorName}
+                  onChange={(e) => setCreatorName(e.target.value)}
+                  required
+                />
+              </label>
 
-            {/* Environment Selection */}
-            <div>
-              <label className="block font-semibold mb-1">Environment</label>
-              <select
-                value={environment}
-                onChange={(e) => setEnvironment(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              >
-                <option value="Fire">Fire</option>
-                <option value="Water">Water</option>
-                <option value="Earth">Earth</option>
-                <option value="Air">Air</option>
-              </select>
-            </div>
-
-            {/* Total Players */}
-            <div>
-              <label className="block font-semibold mb-1">Total Players (Max 12)</label>
-              <input
-                type="number"
-                min="1"
-                max="12"
-                value={totalPlayers}
-                onChange={(e) => setTotalPlayers(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
-
-            {/* Movement Speed */}
-            <div>
-              <label className="block font-semibold mb-1">Movement Speed (1 to 5)</label>
-              <select
-                value={movementSpeed}
-                onChange={(e) => setMovementSpeed(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              >
-                {speedOptions.map((speed) => (
-                  <option key={speed} value={speed}>{speed}x</option>
-                ))}
-              </select>
-              <p className="text-sm text-gray-500 mt-1">
-                "1" is normal speed, "5" is 5x normal speed.
-              </p>
-            </div>
-
-            {/* Create Room Button */}
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Create Room
-            </button>
-
-            {/* Unique Code Display */}
-            {roomCode && (
-              <div className="mt-4 p-3 bg-blue-100 border border-blue-300 rounded">
-                <p className="font-semibold">Your Room Code:</p>
-                <p className="text-lg font-bold">{roomCode}</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Share this code with your friends so they can join your room.
+              {/* pick 2 environments */}
+              <div>
+                <p className="font-semibold mb-2">
+                  Pick <span>exactly two</span>{" "}
+                  environments
                 </p>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {envs.map(({ name, emoji }) => {
+                    const checked = envPick.includes(name);
+                    const disabled = !checked && envPick.length === 2;
+                    return (
+                      <label
+                        key={name}
+                        className={`relative flex items-center justify-center rounded-lg border py-3 cursor-pointer select-none transition
+                          ${
+                            checked
+                              ? "bg-blue-600 text-white shadow-lg"
+                              : "bg-white/60 dark:bg-slate-700/50 text-gray-800 dark:text-gray-100"
+                          }
+                          ${
+                            disabled
+                              ? "opacity-50 cursor-not-allowed"
+                              : "hover:shadow-md"
+                          }`}
+                      >
+                        <input
+                          type="checkbox"
+                          className="absolute opacity-0 pointer-events-none"
+                          checked={checked}
+                          disabled={disabled}
+                          onChange={() => toggleEnv(name)}
+                        />
+                        <span className="text-xl mr-2">{emoji}</span> {name}
+                      </label>
+                    );
+                  })}
+                </div>
+                {envPick.length !== 2 && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Please select exactly two.
+                  </p>
+                )}
               </div>
-            )}
-          </form>
-        )}
 
-        {mode === "join" && (
-          <form onSubmit={handleJoinRoom} className="space-y-4">
-            {/* Player Name */}
-            <div>
-              <label className="block font-semibold mb-1">Player Name</label>
-              <input
-                type="text"
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
+              {/* players + speed */}
+              <div className="grid grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="font-semibold">Max Players</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={12}
+                    value={maxPlayers}
+                    onChange={(e) => setMaxPlayers(Number(e.target.value))}
+                    className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </label>
 
-            {/* Character Color */}
-            <div>
-              <label className="block font-semibold mb-1">Character Color</label>
-              <input
-                type="color"
-                value={characterColor}
-                onChange={(e) => setCharacterColor(e.target.value)}
-                className="w-16 h-10 p-0 border border-gray-300 rounded"
-              />
-              <p className="text-sm text-gray-600 mt-1">
-                Pick a color for your character’s outfit or indicator.
-              </p>
-            </div>
+                <label className="block">
+                  <span className="font-semibold">Speed</span>
+                  <select
+                    value={speed}
+                    onChange={(e) => setSpeed(Number(e.target.value))}
+                    className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500"
+                  >
+                    {speeds.map((s) => (
+                      <option key={s} value={s}>
+                        {s}x
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
 
-            {/* Join Code */}
-            <div>
-              <label className="block font-semibold mb-1">Room Code</label>
-              <input
-                type="text"
-                value={joinCode}
-                onChange={(e) => setJoinCode(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
+              {/* create button */}
+              <button
+                type="submit"
+                disabled={envPick.length !== 2}
+                className={`w-full py-3 rounded-lg font-bold tracking-wide transition
+                  ${
+                    envPick.length === 2
+                      ? "bg-green-600 hover:bg-green-700 text-white shadow-lg"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+              >
+                Let The MadRunzz Begin
+              </button>
 
-            {/* Join Button */}
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              Join Room
-            </button>
-          </form>
-        )}
+              {/* output */}
+              {roomCode && (
+                <div className="text-center p-4 bg-blue-100/70 rounded-lg border border-blue-300 shadow-inner">
+                  <p className="text-sm text-blue-700">Room Code</p>
+                  <p className="text-3xl font-extrabold tracking-[0.25em] text-blue-900">
+                    {roomCode}
+                  </p>
+                  <p className="text-xs mt-2 text-gray-600">
+                    Share this code with friends!
+                  </p>
+                </div>
+              )}
+            </form>
+          ) : (
+            /* ───────── JOIN ───────── */
+            <form onSubmit={join} className="space-y-6">
+              <label className="block">
+                <span className="font-semibold">Player Name</span>
+                <input
+                  value={playerName}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                  required
+                  className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </label>
+
+              <label className="block">
+                <span className="font-semibold">Character Color</span>
+                <input
+                  type="color"
+                  value={charColor}
+                  onChange={(e) => setCharColor(e.target.value)}
+                  className="mt-1 h-12 w-full rounded-lg border cursor-pointer"
+                />
+              </label>
+
+              <label className="block">
+                <span className="font-semibold">Room Code</span>
+                <input
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                  required
+                  className="mt-1 w-full uppercase tracking-widest rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </label>
+
+              <button
+                type="submit"
+                className="w-full py-3 rounded-lg font-bold tracking-wide bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition"
+              >
+                Join The MadRunzz
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );
 }
-
-
-export default LobbyManager
