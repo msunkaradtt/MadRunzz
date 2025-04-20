@@ -1,11 +1,7 @@
-import React from "react";
+import React from "react"
 
-import { LobbyCanvas, LobbyManager } from "../components";
+import { LobbyCanvas, LobbyManager } from "../components"
 
-/**
- * 2‑column layout on ≥ 768 px (md); single‑column stack on small screens.
- * `h-dvh` = full viewport height.  Each child gets 100 % height.
- */
 const Lobby = () => {
   return (
     <div className="h-dvh flex flex-col md:flex-row">
@@ -19,4 +15,4 @@ const Lobby = () => {
   );
 };
 
-export default Lobby;
+export default Lobby

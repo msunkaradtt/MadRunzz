@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 
 /* ─ helpers ───────────────────────────────── */
 const envs = [
@@ -8,32 +8,32 @@ const envs = [
   { name: "Air", emoji: "💨" },
 ];
 
-const speeds = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+const speeds = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
 
 const genCode = (len = 6) =>
   Array.from({ length: len }, () =>
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".charAt(
       Math.floor(Math.random() * 36)
     )
-  ).join("");
+  ).join("")
 
 /* ─ component ─────────────────────────────── */
 export default function LobbyManager() {
   /* ui mode */
-  const [mode, setMode] = useState("create");
+  const [mode, setMode] = useState("create")
 
   /* create‑room state */
-  const [roomName, setRoomName] = useState("");
-  const [creatorName, setCreatorName] = useState("");
-  const [maxPlayers, setMaxPlayers] = useState(4);
-  const [speed, setSpeed] = useState(1);
-  const [envPick, setEnvPick] = useState([]);
-  const [roomCode, setRoomCode] = useState("");
+  const [roomName, setRoomName] = useState("")
+  const [creatorName, setCreatorName] = useState("")
+  const [maxPlayers, setMaxPlayers] = useState(4)
+  const [speed, setSpeed] = useState(1)
+  const [envPick, setEnvPick] = useState([])
+  const [roomCode, setRoomCode] = useState("")
 
   /* join‑room state */
-  const [playerName, setPlayerName] = useState("");
-  const [charColor, setCharColor] = useState("#ff0000");
-  const [joinCode, setJoinCode] = useState("");
+  const [playerName, setPlayerName] = useState("")
+  const [charColor, setCharColor] = useState("#ff0000")
+  const [joinCode, setJoinCode] = useState("")
 
   /* ─ logic ─ */
   const toggleEnv = (env) =>
@@ -43,19 +43,19 @@ export default function LobbyManager() {
         : prev.length < 2
         ? [...prev, env]
         : prev
-    );
+    )
 
   const create = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (envPick.length !== 2) return;
     setRoomCode(genCode());
-  };
+  }
 
   const join = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     // integrate real join logic here
     alert(`Joining ${joinCode} as ${playerName}`);
-  };
+  }
 
   /* ─ ui ─ */
   return (
@@ -146,7 +146,7 @@ export default function LobbyManager() {
                         />
                         <span className="text-xl mr-2">{emoji}</span> {name}
                       </label>
-                    );
+                    )
                   })}
                 </div>
                 {envPick.length !== 2 && (
@@ -258,5 +258,5 @@ export default function LobbyManager() {
         </div>
       </div>
     </div>
-  );
+  )
 }
