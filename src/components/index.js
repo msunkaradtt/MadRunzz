@@ -1,12 +1,13 @@
 import LobbyCanvas from "./LobbyCanvas"
 import LobbyManager from "./LobbyManager"
 
-import StartScreen from "./StartScreen"
-import GameCanvas from "./GameCanvas"
+import Interface from './interface/Interface'
+
+import MadRunzz from "./MadRunzz"
 
 export {
     LobbyCanvas,
     LobbyManager,
-    StartScreen, 
-    GameCanvas
+    Interface,
+    MadRunzz
 }

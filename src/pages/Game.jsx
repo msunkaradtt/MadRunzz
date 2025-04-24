@@ -1,40 +1,36 @@
-import React, { Suspense, useEffect } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { Physics } from '@react-three/rapier'
-import { useStore } from  '../store'
+import React, { Suspense, useEffect, useState } from 'react'
 
-import { StartScreen, GameCanvas } from "../components"
+import { Canvas } from "@react-three/fiber"
+import { KeyboardControls, Loader } from "@react-three/drei"
+
+import { Interface, MadRunzz } from "../components"
 
 
 const Game = () => {
-  const start = useStore(state => state.start)
-  const setStart = useStore(s => s.setStart)
-
-  useEffect(() => {
-    const onKey = e => {
-      if (e.key.toLowerCase() === 'w' && !start) {
-        setStart()
-      }
-    }
-
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [start, setStart])
-
   return (
-    <div className="w-full h-screen bg-gray-800">
-      {start && (
-        <Canvas camera={{ position: [0, 5, 10], fov: 60 }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <Physics>
-            <Suspense fallback={null}>
-              <GameCanvas />
-            </Suspense>
-          </Physics>
-        </Canvas>
-      )}
-    </div>
+    <KeyboardControls
+    map={[
+      { name: "forward", keys: ["ArrowUp", "KeyW"] },
+      { name: "backward", keys: ["ArrowDown", "KeyS"] },
+      { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
+      { name: "rightward", keys: ["ArrowRight", "KeyD"] },
+      { name: "jump", keys: ["Space"] },
+    ]}
+    >
+      <Canvas shadows camera={{
+        fov: 45,
+        near: 0.1,
+        far: 40,
+        position: [2.5, 4, -6],
+      }}
+      >
+        <Suspense fallback={null}>
+          <MadRunzz />
+        </Suspense>
+      </Canvas>
+      <Loader />
+      <Interface />
+    </KeyboardControls>
   )
 }
   
